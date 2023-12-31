@@ -40,10 +40,10 @@ app.listen(port, () => {
 ```
 
 ### #3 노드 리액트 기초 강의 - 몽고 DB 연결
-1.몽고DB DB 생성 및 유저 생성
-2.***Connect***버튼 클릭 후, ***Connection String Only***에 존재하는 코드 복사
-3.***npm install mongoose --save*** 터미널에 입력
-4.index.js에 코드 추가
+1.몽고DB DB 생성 및 유저 생성  
+2.***Connect***버튼 클릭 후, ***Connection String Only***에 존재하는 코드 복사  
+3.***npm install mongoose --save*** 터미널에 입력  
+4.index.js에 코드 추가  
 
 ```
 const mongoose = require('mongoose')
