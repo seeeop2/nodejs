@@ -96,3 +96,13 @@ app.post('/register', (req,res) => {
     })
 })
 ```
+
+### #8 노드 리액트 기초 강의 - Nodemon 설치
+***
+***Nodemon*** 은 변경된 파일이 있을 때, 자동으로 변경된 부분을 반영해준다.  
+***spring boot devtools*** 와 동일하게 변경 감지 해준다.
+***
+1. `npm install nodemon --save-dev` 터미널에 입력한다.  
+`-dev`가 붙으면 로컬 환경에서만 사용
+2. package.json의 "scripts" 안에 `"backend" : "nodemon index.js"` 작성해준다.
+3. `npm run nodemon`을 입력하면 노드몬을 활용하여 서버 ON
