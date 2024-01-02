@@ -59,7 +59,7 @@ mongoose.connect('mongodb://seeeop2:seeeop2@ac-zlksgxu-shard-00-00.psi31ps.mongo
 ### #7 노드 리액트 기초 강의 - BodyParser & PostMan & 회원 가입 기능
 ***
 강의 내용과 다르게 내 코드에 에러가 생기는 문제를 해결하기 위해  
-**package.json**에서 *express* , *mongoose* 의 버전을 낮춤.
+**package.json**에서 *express* , *mongoose* 의 버전을 낮춤.  
 `npm i` 터미널에 입력하여 패키지 재설치
 ***
 
@@ -106,3 +106,44 @@ app.post('/register', (req,res) => {
 `-dev`가 붙으면 로컬 환경에서만 사용
 2. package.json의 "scripts" 안에 `"backend" : "nodemon index.js"` 작성해준다.
 3. `npm run nodemon`을 입력하면 노드몬을 활용하여 서버 ON
+
+### #9 노드 리액트 기초 강의 - 비밀 설정 정보 관리
+***
+Github에 mongoDB 설정 파일이 올라가면 아무나 DB를 사용할 수 있기에,  
+설정 파일을 따로 관리한 뒤, gitignore 설정하기
+***
+1. config 디렉토리를 만든다.
+2. config 디렉토리에 `dev.js` 파일을 만들고, 아래의 코드를 작성한다.
+```
+module.exports = {
+    mongoURI: 'mongodb://seeeop2:seeeop2@ac-zlksgxu-shard-00-00.psi31ps.mongodb.net:27017,ac-zlksgxu-shard-00-01.psi31ps.mongodb.net:27017,ac-zlksgxu-shard-00-02.psi31ps.mongodb.net:27017/?ssl=true&replicaSet=atlas-12avqi-shard-0&authSource=admin&retryWrites=true&w=majority'
+}
+```
+3. config 디렉토리에 `prod.js` 파일을 만들고, 아래의 코드를 작성한다.
+```
+module.exports= {
+    mongoURI : process.env.MONGO_URI	//이건 나중에 배포하는 사이트 참고
+}
+```
+4. config 디렉토리에 `key.js` 파일을 만들고, 아래의 코드를 작성한다.
+```
+if(process.env.NODE_ENV === 'production'){
+    module.exports = require('./prod');
+} else{
+    module.exports = require('./dev');
+}
+```
+5. `index.js` 파일에 내용 추가 및 일부 수정
+```
+const config = require('./config/key');
+```
+
+```
+const mongoose = require('mongoose')
+mongoose.connect(config.mongoURI, {		//<-------원래는 mongoDB URI가 길게 적혀 있었음
+  useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false
+})
+  .then( () => console.log('MongoDB Connected...'))
+  .catch(err => console.log(err))
+```
+6. `npm run start` 서버를 실행하여, 잘 작동하는지 확인한다.
