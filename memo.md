@@ -147,3 +147,4 @@ mongoose.connect(config.mongoURI, {		//<-------원래는 mongoDB URI가 길게 �
   .catch(err => console.log(err))
 ```
 6. `npm run start` 서버를 실행하여, 잘 작동하는지 확인한다.
+7. .gitignore에 `dev.js` 추가하기
