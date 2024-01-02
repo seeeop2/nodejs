@@ -148,3 +148,37 @@ mongoose.connect(config.mongoURI, {		//<-------원래는 mongoDB URI가 길게 �
 ```
 6. `npm run start` 서버를 실행하여, 잘 작동하는지 확인한다.
 7. .gitignore에 `dev.js` 추가하기
+
+
+### #10 노드 리액트 기초 강의 - Bcrypt로 비밀번호 암호화 하기
+***
+DB에 비밀번호 같이 중요한 정보는 암호화가 필요하다.
+Bcrypt로 비밀번호를 암호화 하기
+***
+1. `npm install bcrypt --save` 터미널에 입력하여 패키지 추가하기.
+2. `User.js`에 아래 코드를 추가한다.
+```
+const bcrypt = require('bcrypt');
+const saltRounds = 10
+```
+```
+userSchema.pre('save', function(next){
+    var user = this;
+    if(user.isModified('password')){
+        //비밀번호를 암호화 시킨다.
+        bcrypt.genSalt(saltRounds, function(err, salt){
+            if(err) return next(err)
+            bcrypt.hash(user.password,salt, function(err, hash){
+                if(err) return next(err)
+                user.password = hash
+                next()
+            })
+        })
+    }
+})
+```
+* userSchema.pre() 
+	*  index.js의 `/register` 라우터에서 user.save() 하기 전에 실행이 되는 메소드임.
+* next()
+	* 다음에 실행되어야 할 user.save()로 진행되는 메소드임.
+![mongoDB_Bcrypt](./images/img_1.png)
