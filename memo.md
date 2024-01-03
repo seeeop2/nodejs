@@ -182,3 +182,74 @@ userSchema.pre('save', function(next){
 * next()
 	* 다음에 실행되어야 할 user.save()로 진행되는 메소드임.
 ![mongoDB_Bcrypt](./images/img_1.png)
+
+
+### #11 노드 리액트 기초 강의 - 로그인 기능 with Bcrypt (1)
+***
+로그인 시도를 하면,  
+1. 데이터베이스에 요청된 이메일이 있는지 찾는다.
+2. 요청된 이메일이 데이터베이스에 있다면, 비밀번호가 맞는지 확인한다.
+* 토큰 생성은 #12에서 진행할 예정
+***
+1. `index.js` 파일에 `/login` 라우터를 생성한다.
+```
+app.post('/login', (req, res) =>{
+
+  //요청된 이메일을 데이터베이스에서 있는지 찾는다.
+  User.findOne({email: req.body.email}, (err, user) => {
+    if(!user){
+      return res.json({
+        loginSuccess: false,
+        message: "제공된 이메일에 해당하는 유저가 없습니다."
+      })
+    }
+    
+    //요청된 이메일이 데이터베이스에 있다면, 비밀번호가 맞는 비밀번호 인지 확인.
+    user.comparePassword(req.body.password , (err , isMatch) => {
+      if(!isMatch)
+        return res.json({loginSuccess : false, message: "비밀번호가 틀렸습니다."})
+        
+	  //비밀번호 까지 맞다면, 토큰을 생성하기.
+      user.generateToken((err, user) => {
+	      //토큰 부분은 #12 에서 진행할 예정  
+      })
+    })
+  })
+})
+```
+2. `User.js` userSchema.pre() 메소드의 if문에 else를 추가해준다. (지난 시간 놓친 부분)
+```
+userSchema.pre('save', function(next){
+    var user = this;
+
+    if(user.isModified('password')){
+        //비밀번호를 암호화 시킨다.
+        bcrypt.genSalt(saltRounds, function(err, salt){
+            if(err) return next(err)
+
+            bcrypt.hash(user.password,salt, function(err, hash){
+                if(err) return next(err)
+
+                user.password = hash
+                next()
+            })
+        })
+    } else {		//수정 안했을 때 바로 next() 메소드 실행
+        next()
+    }
+})
+```
+
+3. `User.js`에 입력한 비밀번호 - 암호화된 비밀번호 비교 메소드를 작성한다. 
+
+```
+userSchema.methods.comparePassword = function(plainPassword, cb) {
+
+    //plainPassword : 1234567, 암호화된 비밀번호 : $2b$10$isDQ/8NnoTVw8lTKpKXOKOwuuMGTNBZVuR49ao3ujKAf2i/2eLipK
+    bcrypt.compare(plainPassword, this.password, function(err, isMatch){
+        if(err) return cb(err),
+            cb(null,isMatch)
+    })
+}
+
+```
